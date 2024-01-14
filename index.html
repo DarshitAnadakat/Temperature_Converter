@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Temperature Converter</title>
+    <style>
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+        }
+
+        
+        video {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            mix-blend-mode: hard-light;
+        }
+
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .marquee-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #333;
+            color: white;
+            padding: 5px 0;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            
+        }
+
+        .marquee-text {
+            display: inline-block;
+            animation: marquee  21s infinite reverse both running;
+
+            
+        }
+
+      /*  .container {
+    max-width: 400px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.6); /* Adjust the alpha value (0.7) for transparency 
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    animation: fadeIn 1s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}*/
+
+
+.container {
+    max-width: 400px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.7); 
+    border-radius: 20px; 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4); 
+    padding: 20px;
+    animation: fadeIn 1s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    position: relative; 
+}
+
+.conversion-arrow {
+    font-size: 24px;
+    position: absolute; 
+    top: 50%; 
+    transform: translate(0, -50%); 
+}
+
+.container h1 {
+    font-size: 24px; 
+    text-transform: uppercase; 
+    color: #db5c0d;
+}
+
+.container button {
+    padding: 15px 30px; 
+    background-color: #ff5733;
+    color: #fff; 
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+    margin-top: 20px; 
+}
+
+.container button:hover {
+    background-color: #ff3417; 
+    transform: scale(1.05);
+}
+
+
+
+
+
+
+
+
+
+        h1 {
+            color: #333;
+            transition: color 0.5s;
+        }
+
+        #fromUnit, #toUnit, #temperatureInput {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        #result {
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        #conversionLogic {
+            color: #777;
+            font-style: italic;
+        }
+
+        button, #nightModeBtn {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button:hover, #nightModeBtn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .night-mode h1 {
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+
+
+     
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="conversion-arrow">⇒</div>
+    
+
+
+    <div class="video-container">
+        
+        <video autoplay muted loop>
+            <source src="TESTVIDEO3.mp4" type="video/mp4">
+            
+        </video>
+    </div>
+
+
+
+
+
+    <div class="marquee-container">
+        <span class="marquee-text">🌡️ Created by Darshit Anadkat 🌡️</span>
+    </div>
+    <div class="container">
+        <h1>Temperature Converter</h1>
+        <select id="fromUnit">
+            <option value="celsius">Celsius (°C)</option>
+            <option value="fahrenheit">Fahrenheit (°F)</option>
+            <option value="kelvin">Kelvin (K)</option>
+            <option value="rankine">Rankine (°R)</option>
+            <option value="reaumur">Réaumur (°Re)</option>
+            <option value="delisle">Delisle (°De)</option>
+        </select>
+        <select id="toUnit">
+            <option value="celsius">Celsius (°C)</option>
+            <option value="fahrenheit">Fahrenheit (°F)</option>
+            <option value="kelvin">Kelvin (K)</option>
+            <option value="rankine">Rankine (°R)</option>
+            <option value="reaumur">Réaumur (°Re)</option>
+            <option value="delisle">Delisle (°De)</option>
+        </select>
+        <input type="number" id="temperatureInput" placeholder="Enter temperature">
+        <button onclick="convertTemperature()">Convert</button>
+        <p id="result"></p>
+        <p id="conversionLogic"></p>
+        <button id="nightModeBtn" onclick="toggleNightMode()">Night Mode</button>
+    </div>
+
+    <script>
+        function convertTemperature() {
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const temperatureInput = parseFloat(document.getElementById('temperatureInput').value);
+            let result = '';
+            let conversionLogic = '';
+
+            if (fromUnit === 'celsius' && toUnit === 'fahrenheit') {
+                result = (temperatureInput * 9/5) + 32;
+                conversionLogic = 'Formula: (°C * 9/5) + 32';
+            } else if (fromUnit === 'fahrenheit' && toUnit === 'celsius') {
+                result = (temperatureInput - 32) * 5/9;
+                conversionLogic = 'Formula: (°F - 32) * 5/9';
+            } else if (fromUnit === 'celsius' && toUnit === 'kelvin') {
+                result = temperatureInput + 273.15;
+                conversionLogic = 'Formula: °C + 273.15';
+            } else if (fromUnit === 'celsius' && toUnit === 'rankine') {
+                result = (temperatureInput + 273.15) * 9/5;
+                conversionLogic = 'Formula: (°C + 273.15) * 9/5';
+            } else if (fromUnit === 'celsius' && toUnit === 'reaumur') {
+                result = temperatureInput * 0.8;
+                conversionLogic = 'Formula: °C * 0.8';
+            } else if (fromUnit === 'celsius' && toUnit === 'delisle') {
+                result = (100 - temperatureInput) * 1.5;
+                conversionLogic = 'Formula: (100 - °C) * 1.5';
+            } else if (fromUnit === 'fahrenheit' && toUnit === 'kelvin') {
+                result = (temperatureInput + 459.67) * 5/9;
+                conversionLogic = 'Formula: (°F + 459.67) * 5/9';
+            } else if (fromUnit === 'fahrenheit' && toUnit === 'rankine') {
+                result = temperatureInput + 459.67;
+                conversionLogic = 'Formula: °F + 459.67';
+            } else if (fromUnit === 'fahrenheit' && toUnit === 'reaumur') {
+                result = (temperatureInput - 32) * 4/9;
+                conversionLogic = 'Formula: (°F - 32) * 4/9';
+            } else if (fromUnit === 'fahrenheit' && toUnit === 'delisle') {
+                result = (212 - temperatureInput) * 5/6;
+                conversionLogic = 'Formula: (212 - °F) * 5/6';
+            } else if (fromUnit === 'kelvin' && toUnit === 'rankine') {
+                result = temperatureInput * 1.8;
+                conversionLogic = 'Formula: K * 1.8';
+            } else if (fromUnit === 'kelvin' && toUnit === 'reaumur') {
+                result = (temperatureInput - 273.15) * 0.8;
+                conversionLogic = 'Formula: (K - 273.15) * 0.8';
+            } else if (fromUnit === 'kelvin' && toUnit === 'delisle') {
+                result = (373.15 - temperatureInput) * 1.5;
+                conversionLogic = 'Formula: (373.15 - K) * 1.5';
+            } else if (fromUnit === 'rankine' && toUnit === 'reaumur') {
+                result = temperatureInput * 0.8;
+                conversionLogic = 'Formula: °R * 0.8';
+            } else if (fromUnit === 'rankine' && toUnit === 'delisle') {
+                result = (671.67 - temperatureInput) * 1.5;
+                conversionLogic = 'Formula: (671.67 - °R) * 1.5';
+            } else if (fromUnit === 'reaumur' && toUnit === 'delisle') {
+                result = (80 - temperatureInput) * 1.875;
+                conversionLogic = 'Formula: (80 - °Re) * 1.875';
+            }
+            else if (fromUnit === 'kelvin' && toUnit === 'celsius') {
+                result = temperatureInput - 273.15;
+                 conversionLogic = 'Formula: K - 273.15';
+            } else if (fromUnit === 'kelvin' && toUnit === 'fahrenheit') {
+                result = (temperatureInput - 273.15) * 9/5 + 32;
+                conversionLogic = 'Formula: (K - 273.15) * 9/5 + 32';
+            }
+            else if (fromUnit === 'rankine' && toUnit === 'celsius') {
+                result = (temperatureInput - 491.67) * 5/9;
+                 conversionLogic = 'Formula: (°R - 491.67) * 5/9';
+            } else if (fromUnit === 'rankine' && toUnit === 'fahrenheit') {
+                 result = temperatureInput - 459.67;
+                    conversionLogic = 'Formula: °R - 459.67';
+            } else if (fromUnit === 'rankine' && toUnit === 'kelvin') {
+                  result = temperatureInput * 5/9;
+                   conversionLogic = 'Formula: °R * 5/9';
+            } else if (fromUnit === 'rankine' && toUnit === 'rankine') {
+                   result = temperatureInput;
+                  conversionLogic = 'Formula: No conversion (°R to °R)';
+            }
+
+
+            else if (fromUnit === 'reaumur' && toUnit === 'celsius') {
+                result = temperatureInput * 1.25;
+                conversionLogic = 'Formula: °Re * 1.25';
+            } else if (fromUnit === 'reaumur' && toUnit === 'fahrenheit') {
+                result = (temperatureInput * 2.25) + 32;
+                conversionLogic = 'Formula: (°Re * 2.25) + 32';
+            } else if (fromUnit === 'reaumur' && toUnit === 'kelvin') {
+                result = (temperatureInput * 1.25) + 273.15;
+                conversionLogic = 'Formula: (°Re * 1.25) + 273.15';
+            } else if (fromUnit === 'reaumur' && toUnit === 'rankine') {
+                result = (temperatureInput * 2.25) + 491.67;
+                conversionLogic = 'Formula: (°Re * 2.25) + 491.67';
+            } else if (fromUnit === 'reaumur' && toUnit === 'reaumur') {
+                result = temperatureInput;
+                conversionLogic = 'Formula: No conversion (°Re to °Re)';
+            }
+
+
+            else if (fromUnit === 'delisle' && toUnit === 'celsius') {
+                result = 100 - temperatureInput / 1.5;
+                conversionLogic = 'Formula: 100 - (°De / 1.5)';
+            } else if (fromUnit === 'delisle' && toUnit === 'fahrenheit') {
+                result = (212 - temperatureInput * 1.2);
+                conversionLogic = 'Formula: (212 - °De * 1.2)';
+            } else if (fromUnit === 'delisle' && toUnit === 'kelvin') {
+                result = (373.15 - temperatureInput * 1.5);
+                conversionLogic = 'Formula: (373.15 - °De * 1.5)';
+            } else if (fromUnit === 'delisle' && toUnit === 'rankine') {
+                result = (671.67 - temperatureInput * 1.2);
+                conversionLogic = 'Formula: (671.67 - °De * 1.2)';
+            } else if (fromUnit === 'delisle' && toUnit === 'reaumur') {
+                result = 80 - temperatureInput / 1.875;
+                conversionLogic = 'Formula: 80 - (°De / 1.875)';
+            } else if (fromUnit === 'delisle' && toUnit === 'delisle') {
+                result = temperatureInput;
+                conversionLogic = 'Formula: No conversion (°De to °De)';
+            }
+
+
+            
+            else if (fromUnit === 'celsius' && toUnit === 'celsius') {
+                result = temperatureInput;
+                conversionLogic = 'No conversion (°C to °C)';
+            } else if (fromUnit === 'fahrenheit' && toUnit === 'fahrenheit') {
+                result = temperatureInput;
+                conversionLogic = 'No conversion (°F to °F)';
+            } else if (fromUnit === 'kelvin' && toUnit === 'kelvin') {          
+                result = temperatureInput;
+                conversionLogic = 'No conversion (K to K)';
+            }
+
+
+
+
+            
+
+
+            document.getElementById('result').textContent = `Result: ${result.toFixed(2)} ${toUnit}`;
+            document.getElementById('conversionLogic').textContent = conversionLogic;
+        }
+
+        function toggleNightMode() {
+            const body = document.body;
+            const container = document.querySelector('.container');
+            const heading = document.querySelector('h1');
+            const nightModeBtn = document.getElementById('nightModeBtn');
+
+            if (body.style.backgroundColor === 'rgb(240, 240, 240)' || body.style.backgroundColor === '') {
+                body.style.backgroundColor = '#111';
+                container.style.backgroundColor = '#333';
+                container.classList.add('night-mode');
+                heading.style.color = 'white';
+                nightModeBtn.textContent = 'Normal Mode';
+            } else {
+                body.style.backgroundColor = '#f0f0f0';
+                container.style.backgroundColor = '#fff';
+                container.classList.remove('night-mode');
+                heading.style.color = '#333';
+                nightModeBtn.textContent = 'Night Mode';
+            }
+        }
+    </script>
+</body>
+</html>
